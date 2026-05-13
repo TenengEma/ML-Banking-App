@@ -5,15 +5,16 @@ from cryptography.fernet import Fernet
 from jose import jwt
 from passlib.context import CryptContext
 
-SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'replace-me-jwt-secret')
+SECRET_KEY = os.getenv('JWT_SECRET_KEY')
 ALGORITHM = 'HS256'
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
-DEFAULT_FERNET_KEY = 'QFXfpp8fKJ9ww2PdKWVjYoxFq8NAtnN8fD1C1BMrB-c='
 
 
 def _fernet():
-  key = os.getenv('PII_ENCRYPTION_KEY', DEFAULT_FERNET_KEY)
+  key = os.getenv('PII_ENCRYPTION_KEY')
+  if not key:
+    raise RuntimeError('PII_ENCRYPTION_KEY environment variable must be set')
   return Fernet(key.encode())
 
 
@@ -26,6 +27,8 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 def create_access_token(subject: str, jwt_id: str) -> str:
+  if not SECRET_KEY:
+    raise RuntimeError('JWT_SECRET_KEY environment variable must be set')
   expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
   payload = {'sub': subject, 'jti': jwt_id, 'exp': expire}
   return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)

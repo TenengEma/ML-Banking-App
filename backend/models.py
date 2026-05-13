@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import JSON, Boolean, Date, DateTime, ForeignKey, Integer, Numeric, String, Text
+from sqlalchemy import JSON, Boolean, Date, DateTime, ForeignKey, Integer, Numeric, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from pgvector.sqlalchemy import Vector
 from .database import Base
@@ -15,7 +15,7 @@ class User(Base):
   date_of_birth: Mapped[datetime] = mapped_column(Date, nullable=False)
   national_id_encrypted: Mapped[str] = mapped_column(Text, nullable=False)
   password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
-  created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+  created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
   accounts: Mapped[list['Account']] = relationship(back_populates='user')
 
 
@@ -42,7 +42,7 @@ class Transaction(Base):
   transactional_risk: Mapped[float] = mapped_column(Numeric(5, 2), default=0)
   context_payload: Mapped[dict] = mapped_column(JSON, default=dict)
   behavior_embedding: Mapped[list[float]] = mapped_column(Vector(8), nullable=True)
-  created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+  created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class Session(Base):
@@ -53,7 +53,7 @@ class Session(Base):
   device_id: Mapped[str] = mapped_column(String(120), nullable=False)
   jwt_id: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
   csrf_token: Mapped[str] = mapped_column(String(120), nullable=False)
-  created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+  created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class AuditLog(Base):
@@ -63,7 +63,7 @@ class AuditLog(Base):
   actor_user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=True)
   action: Mapped[str] = mapped_column(String(120), nullable=False)
   payload: Mapped[dict] = mapped_column(JSON, default=dict)
-  created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+  created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class Device(Base):
@@ -75,4 +75,4 @@ class Device(Base):
   trusted: Mapped[bool] = mapped_column(Boolean, default=False)
   typing_signature: Mapped[dict] = mapped_column(JSON, default=dict)
   mouse_signature: Mapped[dict] = mapped_column(JSON, default=dict)
-  created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+  created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
