@@ -1,6 +1,6 @@
 import { Bell, PiggyBank, Wallet, Clock3 } from 'lucide-react'
 import PageShell from '../components/PageShell.jsx'
-import { useAppState } from '../context/AppState.jsx'
+import { useAppState } from '../context/useAppState.js'
 
 const Dashboard = () => {
   const { currentUser, telemetry } = useAppState()

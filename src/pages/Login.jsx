@@ -2,7 +2,7 @@ import { ShieldCheck, Smartphone, Fingerprint } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageShell from '../components/PageShell.jsx'
-import { useAppState } from '../context/AppState.jsx'
+import { useAppState } from '../context/useAppState.js'
 
 const Login = () => {
   const navigate = useNavigate()

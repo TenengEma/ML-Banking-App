@@ -1,6 +1,5 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-
-const AppStateContext = createContext(null)
+import { useEffect, useMemo, useState } from 'react'
+import { AppStateContext } from './useAppState.js'
 
 const getDeviceId = () => {
   const stored = localStorage.getItem('banking_device_id')
@@ -54,10 +53,4 @@ export const AppStateProvider = ({ children }) => {
   )
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>
-}
-
-export const useAppState = () => {
-  const context = useContext(AppStateContext)
-  if (!context) throw new Error('useAppState must be used inside AppStateProvider')
-  return context
 }
